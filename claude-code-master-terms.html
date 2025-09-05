@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Claude Code 마스터 100 용어 학습앱</title>
+  <meta name="theme-color" content="#2563eb" />
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple SD Gothic Neo, "Noto Sans KR", "Malgun Gothic", sans-serif; background:#0f172a; color:#e5e7eb; }
+    header { padding:20px; background:#111827; border-bottom:1px solid #1f2937; position:sticky; top:0; }
+    h1 { margin:0; font-size:18px; }
+    main { max-width:900px; margin:0 auto; padding:20px; }
+    .card { background:#111827; border:1px solid #1f2937; border-radius:14px; padding:20px; margin-bottom:16px; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; }
+    .btn { padding:10px 14px; border-radius:10px; border:1px solid #374151; background:#1f2937; color:#e5e7eb; cursor:pointer; }
+    .btn:active { transform: translateY(1px); }
+    .tag { font-size:12px; padding:4px 8px; border:1px solid #374151; border-radius:999px; background:#0b1220; }
+    .muted { color:#9ca3af; font-size:13px; }
+    .pill { padding:8px 10px; border-radius:999px; background:#0b1220; border:1px solid #1f2937; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:12px; }
+    .tile { padding:14px; border-radius:12px; border:1px solid #1f2937; background:#0b1220; }
+    code { background:#0b1220; padding:2px 6px; border-radius:6px; border:1px solid #1f2937; }
+    a { color:#93c5fd; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    footer { padding:24px; text-align:center; color:#9ca3af; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Claude Code 마스터 용어 학습앱 • PWA</h1>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="row" style="align-items:center; justify-content:space-between;">
+        <div>
+          <div class="muted">학습 모드</div>
+          <div class="row" style="margin-top:6px;">
+            <span class="tag">Flashcards</span>
+            <span class="tag">Quiz</span>
+            <span class="tag">Review</span>
+            <span class="tag">Categories</span>
+          </div>
+        </div>
+        <div class="row">
+          <button id="btnInstall" class="btn">앱 설치(Install PWA)</button>
+          <button id="btnReset" class="btn">진도 초기화</button>
+        </div>
+      </div>
+      <div class="muted" style="margin-top:8px;">
+        오프라인(offline)에서도 동작합니다. 처음 한 번 열어두면 네트워크 없이도 학습 가능.
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="row" style="align-items:center; justify-content:space-between;">
+        <div>
+          <div class="muted">진행 현황(Progress)</div>
+          <div style="margin-top:6px;">
+            <span class="pill">총 용어: <b id="totalTerms">0</b></span>
+            <span class="pill">완료: <b id="doneCount">0</b></span>
+            <span class="pill">정답률: <b id="accuracy">0%</b></span>
+            <span class="pill">연속 학습: <b id="streak">0</b>일</span>
+          </div>
+        </div>
+        <button id="btnNext" class="btn">다음 카드 ▶</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="muted">Flashcard</div>
+      <h2 id="term" style="margin:10px 0 6px 0;">용어가 여기에 표시됩니다</h2>
+      <div id="desc" class="muted">설명이 여기에 표시됩니다</div>
+      <div class="row" style="margin-top:12px;">
+        <button id="btnShow" class="btn">설명 보기</button>
+        <button id="btnEasy" class="btn">쉬웠음(Easy)</button>
+        <button id="btnHard" class="btn">어려웠음(Hard)</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="muted">샘플 카테고리 미리보기</div>
+      <div class="grid" id="gridPreview"></div>
+      <div class="muted" style="margin-top:10px;">
+        더 많은 용어를 추가하려면 파일 맨 아래 <code>TERMS</code> 배열에 항목을 계속 추가하세요.
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="muted">개발자 메모</div>
+      <div class="grid">
+        <div class="tile">정적 사이트(Static site) + PWA(Service Worker)</div>
+        <div class="tile"><code>manifest.json</code>과 <code>sw.js</code>가 함께 있어야 앱처럼 설치/오프라인 동작</div>
+        <div class="tile">GitHub Pages 같은 정적 호스팅에서 바로 동작</div>
+        <div class="tile">서버(HTTP server)가 있으면 로컬에서도 동작</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>© 2025 Claude Code Terms PWA • Made for learning</footer>
+
+  <script>
+    // ====== 간단 학습 데이터(샘플 20개) ======
+    const TERMS = [
+      { term: "fix", desc: "버그를 고친다(Bug fix). 작업 지시의 핵심 동사." },
+      { term: "build", desc: "기능을 만든다(Build feature). 빌드/구축의 의미." },
+      { term: "debug", desc: "문제를 진단하고 원인을 찾는다(Debugging)." },
+      { term: "refactor", desc: "겉보기 기능은 유지, 내부 코드를 정리(Refactoring)." },
+      { term: "test", desc: "동작을 검증하는 테스트(Test) 작성/실행." },
+      { term: "implement", desc: "구현한다(Implement). 요구사항을 코드로 만든다." },
+      { term: "deploy", desc: "배포한다(Deploy). 사용자가 쓰는 환경으로 올린다." },
+      { term: "review", desc: "코드 리뷰(Code review). 품질 보증과 지식 공유." },
+      { term: "optimize", desc: "성능 최적화(Optimize). 속도/자원 개선." },
+      { term: "migrate", desc: "마이그레이션(Migration). 환경/버전/구조 전환." },
+      { term: "git commit", desc: "버전 기록(Commit). 변경사항 스냅샷 저장." },
+      { term: "pull request", desc: "PR. 변경 제안과 리뷰/병합 절차." },
+      { term: "branch", desc: "작업 분기(Branch). 안전한 병행 개발." },
+      { term: "CI/CD", desc: "지속적 통합/배포. 자동화 파이프라인." },
+      { term: "React", desc: "프론트엔드 라이브러리(UI) 대표 주자." },
+      { term: "TypeScript", desc: "JS에 타입 추가. 대규모 안정성 확보." },
+      { term: "API", desc: "시스템 간 약속된 인터페이스. REST/GraphQL 등." },
+      { term: "async/await", desc: "비동기(Asynchronous) 코드의 현대적 패턴." },
+      { term: "authentication", desc: "인증(Authentication). 사용자 확인." },
+      { term: "logging", desc: "로깅(Logging). 문제 분석과 모니터링 근거." }
+    ];
+    // ========================================
+
+    // 진행도 저장키
+    const KEY = {
+      INDEX: "cc_terms_index",
+      DONE: "cc_terms_done",
+      CORRECT: "cc_terms_correct",
+      DAYS: "cc_terms_streak_days",
+      LAST: "cc_terms_last_open"
+    };
+
+    const $ = (q) => document.querySelector(q);
+    const $$ = (q) => document.querySelectorAll(q);
+
+    const totalTermsEl = $("#totalTerms");
+    const doneCountEl = $("#doneCount");
+    const accuracyEl = $("#accuracy");
+    const streakEl = $("#streak");
+
+    let idx = parseInt(localStorage.getItem(KEY.INDEX) || "0", 10);
+    let done = JSON.parse(localStorage.getItem(KEY.DONE) || "[]");
+    let correct = parseInt(localStorage.getItem(KEY.CORRECT) || "0", 10);
+
+    // streak(연속 학습일) 계산
+    function updateStreak() {
+      const today = new Date().toDateString();
+      const last = localStorage.getItem(KEY.LAST);
+      let days = parseInt(localStorage.getItem(KEY.DAYS) || "0", 10);
+      if (!last) {
+        days = 1;
+      } else if (last !== today) {
+        days += 1;
+      }
+      localStorage.setItem(KEY.LAST, today);
+      localStorage.setItem(KEY.DAYS, String(days));
+      streakEl.textContent = days;
+    }
+
+    function clampIndex() {
+      if (idx < 0) idx = 0;
+      if (idx >= TERMS.length) idx = 0;
+    }
+
+    function saveProgress() {
+      localStorage.setItem(KEY.INDEX, String(idx));
+      localStorage.setItem(KEY.DONE, JSON.stringify(done));
+      localStorage.setItem(KEY.CORRECT, String(correct));
+      const acc = done.length ? Math.round((correct / done.length) * 100) : 0;
+      totalTermsEl.textContent = TERMS.length;
+      doneCountEl.textContent = done.length;
+      accuracyEl.textContent = acc + "%";
+    }
+
+    function renderCard() {
+      clampIndex();
+      const cur = TERMS[idx];
+      $("#term").textContent = cur.term;
+      $("#desc").textContent = "설명 숨김 — [설명 보기]를 눌러 확인";
+    }
+
+    function showDesc() {
+      const cur = TERMS[idx];
+      $("#desc").textContent = cur.desc;
+    }
+
+    function mark(easy) {
+      const id = idx;
+      if (!done.includes(id)) done.push(id);
+      if (easy) correct++;
+      idx = (idx + 1) % TERMS.length;
+      saveProgress();
+      renderCard();
+    }
+
+    function next() {
+      idx = (idx + 1) % TERMS.length;
+      saveProgress();
+      renderCard();
+    }
+
+    function resetAll() {
+      idx = 0;
+      done = [];
+      correct = 0;
+      localStorage.removeItem(KEY.LAST);
+      localStorage.removeItem(KEY.DAYS);
+      saveProgress();
+      updateStreak();
+      renderCard();
+      alert("진도가 초기화되었습니다.");
+    }
+
+    function renderPreview() {
+      const grid = $("#gridPreview");
+      grid.innerHTML = "";
+      TERMS.forEach(t => {
+        const div = document.createElement("div");
+        div.className = "tile";
+        div.innerHTML = `<b>${t.term}</b><div class="muted" style="margin-top:4px;">${t.desc}</div>`;
+        grid.appendChild(div);
+      });
+    }
+
+    // 이벤트 연결
+    $("#btnShow").addEventListener("click", showDesc);
+    $("#btnEasy").addEventListener("click", () => mark(true));
+    $("#btnHard").addEventListener("click", () => mark(false));
+    $("#btnNext").addEventListener("click", next);
+    $("#btnReset").addEventListener("click", resetAll);
+
+    // PWA 설치 프롬프트
+    let deferredPrompt = null;
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    $("#btnInstall").addEventListener("click", async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt = null;
+      } else {
+        alert("브라우저가 설치 프롬프트를 제공하지 않는 중입니다. 주소창의 '앱 설치' 또는 '홈 화면에 추가'를 사용하세요.");
+      }
+    });
+
+    // Service Worker 등록
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+
+    // 초기화
+    updateStreak();
+    saveProgress();
+    renderCard();
+    renderPreview();
+  </script>
+</body>
+</html>
