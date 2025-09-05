@@ -25,6 +25,15 @@
    https://{GitHubID}.github.io/{REPO_NAME}/claude-code-master-terms.html
    ```
 
+## 🌐 배포된 앱 웹 주소
+
+**현재 배포된 앱 주소:**
+- **메인 앱**: https://dtslib1979.github.io/AppsWH/claude-code-master-terms.html
+- **루트 경로**: https://dtslib1979.github.io/AppsWH/
+
+✅ GitHub Pages가 활성화되어 있고 정상적으로 배포되었습니다.
+📱 이 주소로 접속하여 PWA 앱을 설치하고 사용할 수 있습니다.
+
 ## 용어 추가
 
 claude-code-master-terms.html 하단의 TERMS 배열에 { term, desc } 항목을 추가하면 됨.
