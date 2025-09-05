@@ -1,0 +1,12 @@
+{
+  "name": "Claude Code 마스터 용어 학습앱",
+  "short_name": "Claude 용어",
+  "description": "개발 효율성을 높이는 Claude Code 핵심 용어 학습 PWA",
+  "start_url": "./claude-code-master-terms.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "lang": "ko-KR",
+  "categories": ["education", "productivity", "developer-tools"]
+}
