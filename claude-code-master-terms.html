@@ -6,6 +6,7 @@
   <title>Claude Code 마스터 100 용어 학습앱</title>
   <meta name="theme-color" content="#2563eb" />
   <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <style>
     * { box-sizing: border-box; }
     body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple SD Gothic Neo, "Noto Sans KR", "Malgun Gothic", sans-serif; background:#0f172a; color:#e5e7eb; }
@@ -254,7 +255,13 @@
     // Service Worker 등록
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
+        navigator.serviceWorker.register('./sw.js')
+          .then((registration) => {
+            console.log('ServiceWorker registered successfully:', registration.scope);
+          })
+          .catch((error) => {
+            console.log('ServiceWorker registration failed:', error);
+          });
       });
     }
 
