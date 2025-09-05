@@ -1,13 +1,13 @@
-const CACHE_NAME = "cc-terms-v1";
-const URLS = [
-  "./claude-code-master-terms.html",
-  "./manifest.json",
-  "./"
+const CACHE_NAME = 'claude-terms-v2';
+const BASE = self.location.pathname.replace(/\/[^/]*$/, '/');
+const urlsToCache = [
+  `${BASE}claude-code-master-terms.html`,
+  `${BASE}manifest.json`
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(URLS))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
   );
 });
 
