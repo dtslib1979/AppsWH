@@ -4,8 +4,21 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Claude Code 마스터 100 용어 학습앱</title>
+  <meta name="description" content="개발 효율성을 높이는 Claude Code 핵심 용어 학습 PWA" />
   <meta name="theme-color" content="#2563eb" />
+  
+  <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json" />
+  
+  <!-- iOS Safari PWA Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Claude 용어" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3e%3crect width='180' height='180' fill='%23033b95'/%3e%3ctext x='90' y='115' font-size='80' text-anchor='middle' fill='white'%3e📚%3c/text%3e%3c/svg%3e" />
+  
+  <!-- Microsoft Tiles -->
+  <meta name="msapplication-TileColor" content="#2563eb" />
+  <meta name="msapplication-TileImage" content="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 144 144'%3e%3crect width='144' height='144' fill='%23033b95'/%3e%3ctext x='72' y='90' font-size='60' text-anchor='middle' fill='white'%3e📚%3c/text%3e%3c/svg%3e" />
   <style>
     * { box-sizing: border-box; }
     body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple SD Gothic Neo, "Noto Sans KR", "Malgun Gothic", sans-serif; background:#0f172a; color:#e5e7eb; }
@@ -254,7 +267,17 @@
     // Service Worker 등록
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
+        navigator.serviceWorker.register('sw.js')
+          .then((registration) => {
+            console.log('SW registered: ', registration);
+            // 업데이트 확인
+            registration.addEventListener('updatefound', () => {
+              console.log('New SW version found');
+            });
+          })
+          .catch((error) => {
+            console.log('SW registration failed: ', error);
+          });
       });
     }
 

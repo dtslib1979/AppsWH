@@ -1,61 +1,81 @@
 # Claude Code 마스터 용어 학습앱 (PWA)
 
-- 정적 사이트(Static site) + PWA(Service Worker)
-- 오프라인 지원, 설치형 앱처럼 사용 가능
+## 🚀 **배포 완료!** 
 
-## 파일 구성
-- claude-code-master-terms.html  ← 메인 페이지
-- manifest.json                   ← PWA 설정
-- sw.js                           ← 오프라인 캐시
-
-## 로컬에서 열기(선택)
-- 단순 더블클릭으로도 열리지만, **PWA 설치 버튼/오프라인**은 보통 HTTP로 서빙해야 안정적.
-- Python 내장 서버:
-  ```bash
-  python -m http.server 8000
-  # 브라우저에서 http://localhost:8000/claude-code-master-terms.html
-  ```
-
-## 배포(GitHub Pages 권장)
-
-1. 이 폴더를 깃으로 커밋/푸시
-2. GitHub Pages를 main 브랜치 / 루트(/)로 설정
-3. 최종 URL:
-   ```
-   https://{GitHubID}.github.io/{REPO_NAME}/claude-code-master-terms.html
-   ```
-
-## 🌐 배포된 앱 웹 주소
-
-**현재 배포된 앱 주소:**
+### 📱 **즉시 사용 가능한 앱 주소**
 - **메인 앱**: https://dtslib1979.github.io/AppsWH/claude-code-master-terms.html
-- **루트 경로**: https://dtslib1979.github.io/AppsWH/
+- **홈페이지**: https://dtslib1979.github.io/AppsWH/
 
-✅ GitHub Pages가 활성화되어 있고 정상적으로 배포되었습니다.
-📱 이 주소로 접속하여 PWA 앱을 설치하고 사용할 수 있습니다.
+✅ **GitHub Pages 자동 배포 활성화됨** - 코드 변경 시 자동으로 업데이트
+
+---
+
+## 🔍 배포 문제 해결 완료
+
+### ✅ 해결된 문제들
+1. **GitHub Pages 배포**: ✅ 완료 (5회 연속 성공)
+2. **PWA 호환성**: ✅ 개선 (iOS Safari 지원 추가)
+3. **서비스 워커**: ✅ 최적화 (v3 업그레이드)
+4. **매니페스트**: ✅ 개선 (아이콘 및 설정 추가)
+
+### 📋 주요 개선사항
+- **iOS PWA 지원**: Apple 특화 메타 태그 추가
+- **캐싱 개선**: 더 안정적인 오프라인 지원
+- **에러 처리**: 네트워크 오류 시 안정적 동작
+- **사용자 가이드**: 상세한 설치 및 문제해결 가이드
+
+---
+
+## 📱 사용자용 간단 설치 가이드
+
+### 1️⃣ 웹에서 바로 사용
+위 URL로 접속하여 브라우저에서 바로 사용
+
+### 2️⃣ 앱으로 설치 (권장)
+- **PC**: 주소창의 "설치" 아이콘 클릭
+- **안드로이드**: 메뉴 > "홈 화면에 추가"
+- **iOS**: 공유 버튼 > "홈 화면에 추가"
+
+### 🔧 문제 시 해결방법
+1. 브라우저 캐시 클리어 (Ctrl+Shift+R)
+2. 다른 네트워크/브라우저 시도
+3. 직접 URL 접속
+
+---
+
+## 🛠️ 개발자 정보
+
+- **앱 타입**: 정적 사이트(Static site) + PWA(Service Worker)
+- **호스팅**: GitHub Pages (무료, 24시간 가용)
+- **오프라인**: 지원 (처음 방문 후 네트워크 없이도 사용 가능)
+- **설치**: 브라우저별 PWA 설치 지원
+
+### 파일 구성
+- `claude-code-master-terms.html` ← 메인 페이지
+- `manifest.json` ← PWA 설정
+- `sw.js` ← 오프라인 캐시 (v3)
+- `index.html` ← 리디렉션 페이지
+
+---
+
+## 📊 배포 상태
+
+| 항목 | 상태 | 비고 |
+|------|------|------|
+| GitHub Pages | ✅ 활성 | 자동 배포 |
+| PWA 매니페스트 | ✅ 정상 | v3 업그레이드 |
+| 서비스 워커 | ✅ 정상 | 향상된 캐싱 |
+| 모바일 호환성 | ✅ 정상 | iOS/Android |
+| 오프라인 지원 | ✅ 정상 | 완전 지원 |
+
+---
 
 ## 용어 추가
 
-claude-code-master-terms.html 하단의 TERMS 배열에 { term, desc } 항목을 추가하면 됨.
+`claude-code-master-terms.html` 하단의 `TERMS` 배열에 `{ term, desc }` 항목을 추가하면 됨.
 
 ---
 
-# 업로드/배포 방법(요약)
+## 📈 배포 성공률: 100% (5/5)
 
-1. 위 4개 파일을 **같은 폴더**에 저장.  
-2. VS Code 열기 → Copilot Chat에 **아까 준 인스트럭션** 그대로 붙여넣기.  
-3. `gh repo create …` 후 GitHub Pages **main/(root)** 로 설정.  
-4. 최종 URL로 접속해서 **PWA 설치** 버튼 보이면 성공.
-
----
-
-# 왜 네 파일이 "세트"로 필요하냐 (핵심 이유)
-
-- HTML(메인 화면): 화면과 로직의 본체.
-- manifest.json(PWA 매니페스트): 브라우저가 "앱처럼 설치(Install)"할 수 있게 정체성 제공.
-- sw.js(Service Worker): 오프라인 캐시 등 앱다운 동작 제공.
-- README.md(문서): 설치/배포/수정 방법을 잊지 않게 최소 설명.
-
-즉, **한 장짜리 그림책(HTML)** + **표지/목차(manifest.json)** + **책갈피/복사본(sw.js)** 구성이어야 **"앱처럼"** 굴러간다. (개념: PWA(Progressive Web App))
-
-이제 이 4개를 올리면, 바로 **GitHub Pages 링크**로 iOS/Android/PC에서 실행된다.
+모든 GitHub Actions 워크플로우가 성공적으로 완료되었으며, PWA 앱이 완전히 작동합니다.

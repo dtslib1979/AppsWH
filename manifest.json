@@ -8,5 +8,15 @@
   "background_color": "#0f172a",
   "theme_color": "#2563eb",
   "lang": "ko-KR",
-  "categories": ["education", "productivity", "developer-tools"]
+  "categories": ["education", "productivity", "developer-tools"],
+  "orientation": "any",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3e%3crect width='100' height='100' fill='%23033b95'/%3e%3ctext x='50' y='60' font-size='40' text-anchor='middle' fill='white'%3e📚%3c/text%3e%3c/svg%3e",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
