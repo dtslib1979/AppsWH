@@ -1,4 +1,4 @@
-const CACHE_NAME = 'claude-terms-v2';
+const CACHE_NAME = 'claude-terms-v3';
 const BASE = self.location.pathname.replace(/\/[^/]*$/, '/');
 const urlsToCache = [
   `${BASE}claude-code-master-terms.html`,

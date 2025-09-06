@@ -102,28 +102,8 @@
   <footer>© 2025 Claude Code Terms PWA • Made for learning</footer>
 
   <script>
-    // ====== 간단 학습 데이터(샘플 20개) ======
+    // ====== 간단 학습 데이터(샘플 0개) ======
     const TERMS = [
-      { term: "fix", desc: "버그를 고친다(Bug fix). 작업 지시의 핵심 동사." },
-      { term: "build", desc: "기능을 만든다(Build feature). 빌드/구축의 의미." },
-      { term: "debug", desc: "문제를 진단하고 원인을 찾는다(Debugging)." },
-      { term: "refactor", desc: "겉보기 기능은 유지, 내부 코드를 정리(Refactoring)." },
-      { term: "test", desc: "동작을 검증하는 테스트(Test) 작성/실행." },
-      { term: "implement", desc: "구현한다(Implement). 요구사항을 코드로 만든다." },
-      { term: "deploy", desc: "배포한다(Deploy). 사용자가 쓰는 환경으로 올린다." },
-      { term: "review", desc: "코드 리뷰(Code review). 품질 보증과 지식 공유." },
-      { term: "optimize", desc: "성능 최적화(Optimize). 속도/자원 개선." },
-      { term: "migrate", desc: "마이그레이션(Migration). 환경/버전/구조 전환." },
-      { term: "git commit", desc: "버전 기록(Commit). 변경사항 스냅샷 저장." },
-      { term: "pull request", desc: "PR. 변경 제안과 리뷰/병합 절차." },
-      { term: "branch", desc: "작업 분기(Branch). 안전한 병행 개발." },
-      { term: "CI/CD", desc: "지속적 통합/배포. 자동화 파이프라인." },
-      { term: "React", desc: "프론트엔드 라이브러리(UI) 대표 주자." },
-      { term: "TypeScript", desc: "JS에 타입 추가. 대규모 안정성 확보." },
-      { term: "API", desc: "시스템 간 약속된 인터페이스. REST/GraphQL 등." },
-      { term: "async/await", desc: "비동기(Asynchronous) 코드의 현대적 패턴." },
-      { term: "authentication", desc: "인증(Authentication). 사용자 확인." },
-      { term: "logging", desc: "로깅(Logging). 문제 분석과 모니터링 근거." }
     ];
     // ========================================
 
@@ -180,17 +160,27 @@
 
     function renderCard() {
       clampIndex();
+      if (TERMS.length === 0) {
+        $("#term").textContent = "용어가 없습니다";
+        $("#desc").textContent = "TERMS 배열에 용어를 추가해주세요";
+        return;
+      }
       const cur = TERMS[idx];
       $("#term").textContent = cur.term;
       $("#desc").textContent = "설명 숨김 — [설명 보기]를 눌러 확인";
     }
 
     function showDesc() {
+      if (TERMS.length === 0) {
+        $("#desc").textContent = "용어가 없어서 설명을 표시할 수 없습니다";
+        return;
+      }
       const cur = TERMS[idx];
       $("#desc").textContent = cur.desc;
     }
 
     function mark(easy) {
+      if (TERMS.length === 0) return;
       const id = idx;
       if (!done.includes(id)) done.push(id);
       if (easy) correct++;
@@ -200,6 +190,7 @@
     }
 
     function next() {
+      if (TERMS.length === 0) return;
       idx = (idx + 1) % TERMS.length;
       saveProgress();
       renderCard();
