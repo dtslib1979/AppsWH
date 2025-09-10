@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스마트폰 구매 공리 계산기</title>
+    <meta name="description" content="4원칙 공리를 바탕으로 한 스마트폰 구매 의사결정 도구">
+    <meta name="theme-color" content="#6366f1">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.125rem;
+            opacity: 0.95;
+            margin-bottom: 1rem;
+        }
+
+        .version-badge {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            display: inline-block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--gray-200);
+            animation: fadeInUp 0.8s ease-out;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.875rem;
+        }
+
+        .input-group input, 
+        .input-group select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--gray-50);
+        }
+
+        .input-group input:focus, 
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgb(99 102 241 / 0.1);
+            transform: translateY(-1px);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 0.75rem;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-group:hover {
+            background: white;
+            border-color: var(--gray-200);
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: 500;
+            color: var(--gray-700);
+            cursor: pointer;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.2);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .result-section {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
+            border: 2px solid var(--gray-200);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cost-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .cost-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 2px solid var(--gray-200);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cost-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        .cost-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary);
+        }
+
+        .cost-item h4 {
+            color: var(--gray-600);
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .cost-amount {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .cost-description {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        .recommendation {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            margin-top: 1.5rem;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recommendation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        .recommendation.warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+        }
+
+        .recommendation h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .recommendation p {
+            margin-bottom: 0.75rem;
+            opacity: 0.95;
+        }
+
+        .recommendation p:last-child {
+            margin-bottom: 0;
+        }
+
+        .principles {
+            margin-top: 1.5rem;
+        }
+
+        .principle {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 0 1rem 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .principle:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .principle h4 {
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .principle p {
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+        }
+
+        .principle p:last-child {
+            margin-bottom: 0;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .breakdown {
+            margin-top: 1.5rem;
+        }
+
+        .breakdown h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 1rem;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+
+        .breakdown-item:hover {
+            background: var(--gray-50);
+            margin: 0 -1rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: 2px solid var(--primary);
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--primary-dark);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid var(--gray-300);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shimmer {
+            0%, 100% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            50% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .cost-comparison {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .cost-amount {
+                font-size: 1.5rem;
+            }
+            
+            .recommendation {
+                padding: 1.5rem;
+            }
+            
+            .breakdown-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .card {
+                padding: 1rem;
+                border-radius: 1rem;
+            }
+            
+            .input-group input,
+            .input-group select {
+                padding: 0.75rem;
+            }
+        }
+
+        /* Focus styles for accessibility */
+        .btn:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        /* Reduced motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 스마트폰 구매 공리 계산기</h1>
+            <p class="subtitle">4원칙 공리를 바탕으로 한 최적 구매 의사결정</p>
+            <span class="version-badge">v2.1 PWA</span>
+        </div>
+
+        <div class="card">
+            <h2>📊 계산 조건 입력</h2>
+            
+            <div class="input-group">
+                <label for="currentPlan">현재 월 요금제 (원)</label>
+                <input type="number" id="currentPlan" value="10400" placeholder="예: 10400">
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="welfareDiscount">
+                <label for="welfareDiscount">복지할인 적용 (월 28,000원)</label>
+            </div>
+
+            <div class="input-group">
+                <label for="deviceModel">희망 기종</label>
+                <select id="deviceModel">
+                    <option value="basic">Galaxy S25 기본형 (약 115만원)</option>
+                    <option value="plus">Galaxy S25 Plus (약 135만원)</option>
+                    <option value="ultra">Galaxy S25 Ultra (약 170만원)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="carrierPlan1">통신사 6개월 요금제 (원)</label>
+                <input type="number" id="carrierPlan1" value="86400" placeholder="예: 86400">
+            </div>
+
+            <div class="input-group">
+                <label for="carrierPlan2">통신사 18개월 요금제 (원)</label>
+                <input type="number" id="carrierPlan2" value="18400" placeholder="예: 18400">
+            </div>
+
+            <div class="input-group">
+                <label for="subsidyAmount">공시지원금 + 추가지원금 (원)</label>
+                <input type="number" id="subsidyAmount" value="550000" placeholder="예: 550000">
+            </div>
+
+            <div class="input-group">
+                <label for="retailPrice">자급제 가격 (원)</label>
+                <input type="number" id="retailPrice" value="1480000" placeholder="예: 1480000">
+            </div>
+
+            <div class="input-group">
+                <label for="mvnoPrice">알뜰폰 월 요금 (원)</label>
+                <input type="number" id="mvnoPrice" value="17000" placeholder="예: 17000">
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="hasTablet">
+                <label for="hasTablet">태블릿 보유 (S펜 연동성 고려)</label>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="appleTransition">
+                <label for="appleTransition">2028년 애플 생태계 전환 계획</label>
+            </div>
+
+            <button class="btn" onclick="calculateOptimalChoice()">
+                <span id="btnText">최적 선택 계산하기</span>
+            </button>
+        </div>
+
+        <div class="result-section" id="resultSection" style="display: none;">
+            <div class="result-card">
+                <h3 class="result-title">💰 24개월 총비용 비교</h3>
+                
+                <div class="cost-comparison">
+                    <div class="cost-item">
+                        <h4>📞 통신사 프로모션</h4>
+                        <div class="cost-amount" id="carrierTotal">-</div>
+                        <p class="cost-description">인크레멘탈 비용</p>
+                    </div>
+                    <div class="cost-item">
+                        <h4>📱 자급제 + 알뜰폰</h4>
+                        <div class="cost-amount" id="retailTotal">-</div>
+                        <p class="cost-description">총 비용</p>
+                    </div>
+                </div>
+
+                <div class="breakdown" id="breakdown">
+                    <!-- 비용 세부분석 -->
+                </div>
+            </div>
+
+            <div class="result-card">
+                <h3 class="result-title">🎯 4원칙 공리 분석</h3>
+                <div class="principles" id="principlesAnalysis">
+                    <!-- 공리 분석 결과 -->
+                </div>
+            </div>
+
+            <div class="recommendation" id="recommendation">
+                <!-- 추천 결과 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 설정 데이터
+        const CONFIG = {
+            version: "2.1.0",
+            welfareDiscount: 28000,
+            devices: {
+                basic: { price: 1150000, name: "Galaxy S25 기본형" },
+                plus: { price: 1350000, name: "Galaxy S25 Plus" },
+                ultra: { price: 1700000, name: "Galaxy S25 Ultra" }
+            },
+            principles: {
+                1: {
+                    title: "공리 1: 기본 원칙 (자급제 + 알뜰폰)",
+                    description: "WiFi 중심 생활, 복지할인 없는 일반 사용자는 자급제 + 알뜰폰이 최적"
+                },
+                2: {
+                    title: "공리 2: 예외 원칙 (통신사 프로모션)",
+                    description: "기초수급자, 차상위계층 등 복지할인 대상자는 통신사 프로모션 활용"
+                },
+                3: {
+                    title: "공리 3: 수리비 변수 관리",
+                    description: "바 타입 선택으로 수리비 리스크 최소화, 보험 상계처리"
+                },
+                4: {
+                    title: "공리 4: 작업 호환성 & 생태계 전환",
+                    description: "태블릿 연동성, 2028년 애플 전환 타이밍 고려"
+                }
+            }
+        };
+
+        // 로컬 스토리지 저장/복원
+        function saveInputs() {
+            try {
+                const inputs = {
+                    currentPlan: document.getElementById('currentPlan')?.value || '10400',
+                    welfareDiscount: document.getElementById('welfareDiscount')?.checked || false,
+                    deviceModel: document.getElementById('deviceModel')?.value || 'basic',
+                    carrierPlan1: document.getElementById('carrierPlan1')?.value || '86400',
+                    carrierPlan2: document.getElementById('carrierPlan2')?.value || '18400',
+                    subsidyAmount: document.getElementById('subsidyAmount')?.value || '550000',
+                    retailPrice: document.getElementById('retailPrice')?.value || '1480000',
+                    mvnoPrice: document.getElementById('mvnoPrice')?.value || '17000',
+                    hasTablet: document.getElementById('hasTablet')?.checked || false,
+                    appleTransition: document.getElementById('appleTransition')?.checked || false
+                };
+                localStorage.setItem('smartphoneCalculatorInputs', JSON.stringify(inputs));
+            } catch (error) {
+                console.warn('저장에 실패했습니다:', error);
+            }
+        }
+
+        function loadInputs() {
+            try {
+                const saved = localStorage.getItem('smartphoneCalculatorInputs');
+                if (saved) {
+                    const inputs = JSON.parse(saved);
+                    Object.keys(inputs).forEach(key => {
+                        const element = document.getElementById(key);
+                        if (element) {
+                            if (element.type === 'checkbox') {
+                                element.checked = Boolean(inputs[key]);
+                            } else {
+                                element.value = inputs[key] || '';
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.warn('불러오기에 실패했습니다:', error);
+            }
+        }
+
+        // 안전한 숫자 파싱 함수
+        function safeParseInt(value, defaultValue = 0) {
+            const parsed = parseInt(value);
+            return isNaN(parsed) ? defaultValue : parsed;
+        }
+
+        // 계산 함수
+        function calculateOptimalChoice() {
+            try {
+                // 로딩 상태 표시
+                const btnText = document.getElementById('btnText');
+                const originalText = btnText.textContent;
+                btnText.innerHTML = '<span class="loading"></span>계산 중...';
+                
+                setTimeout(() => {
+                    performCalculation();
+                    btnText.textContent = originalText;
+                }, 500);
+                
+            } catch (error) {
+                console.error('계산 중 오류가 발생했습니다:', error);
+                alert('계산 중 오류가 발생했습니다. 입력값을 확인해주세요.');
+                document.getElementById('btnText').textContent = '최적 선택 계산하기';
+            }
+        }
+
+        function performCalculation() {
+            saveInputs();
+
+            // 안전한 입력값 가져오기
+            const currentPlan = safeParseInt(document.getElementById('currentPlan')?.value, 10400);
+            const welfareDiscount = document.getElementById('welfareDiscount')?.checked || false;
+            const deviceModel = document.getElementById('deviceModel')?.value || 'basic';
+            const carrierPlan1 = safeParseInt(document.getElementById('carrierPlan1')?.value, 86400);
+            const carrierPlan2 = safeParseInt(document.getElementById('carrierPlan2')?.value, 18400);
+            const subsidyAmount = safeParseInt(document.getElementById('subsidyAmount')?.value, 550000);
+            const retailPrice = safeParseInt(document.getElementById('retailPrice')?.value, 1480000);
+            const mvnoPrice = safeParseInt(document.getElementById('mvnoPrice')?.value, 17000);
+            const hasTablet = document.getElementById('hasTablet')?.checked || false;
+            const appleTransition = document.getElementById('appleTransition')?.checked || false;
+
+            // 베이스라인 계산
+            const baseline = currentPlan * 24;
+
+            // 복지할인 반영
+            const monthlyWelfareDiscount = welfareDiscount ? CONFIG.welfareDiscount : 0;
+            const totalWelfareDiscount = monthlyWelfareDiscount * 24;
+
+            // 통신사 프로모션 총비용
+            const carrier6months = Math.max(0, (carrierPlan1 - monthlyWelfareDiscount)) * 6;
+            const carrier18months = Math.max(0, (carrierPlan2 - monthlyWelfareDiscount)) * 18;
+            const carrierDeviceCost = Math.max(0, CONFIG.devices[deviceModel].price - subsidyAmount);
+            const carrierTotal = carrier6months + carrier18months + carrierDeviceCost;
+
+            // 인크레멘탈 비용
+            const incremental = carrierTotal - baseline;
+
+            // 자급제 + 알뜰폰 총비용
+            const retailTotal = retailPrice + (mvnoPrice * 24);
+
+            // 비용 차이
+            const difference = retailTotal - carrierTotal;
+
+            // 4원칙 분석
+            const principlesAnalysis = analyzePrinciples({
+                welfareDiscount,
+                hasTablet,
+                appleTransition,
+                deviceModel,
+                incremental,
+                difference
+            });
+
+            // 결과 표시
+            displayResults({
+                carrierTotal,
+                incremental,
+                retailTotal,
+                difference,
+                baseline,
+                carrier6months,
+                carrier18months,
+                carrierDeviceCost,
+                totalWelfareDiscount,
+                principlesAnalysis,
+                deviceModel
+            });
+
+            // 결과 섹션 표시
+            const resultSection = document.getElementById('resultSection');
+            if (resultSection) {
+                resultSection.style.display = 'block';
+                resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function analyzePrinciples({ welfareDiscount, hasTablet, appleTransition, deviceModel, incremental, difference }) {
+            const analysis = [];
+
+            // 공리 1 or 2 적용
+            if (welfareDiscount) {
+                analysis.push({
+                    principle: 2,
+                    active: true,
+                    reason: "복지할인이 적용되어 통신사 프로모션이 유리합니다."
+                });
+            } else {
+                analysis.push({
+                    principle: 1,
+                    active: difference > 0,
+                    reason: difference > 0 ? "복지할인이 없어 자급제 + 알뜰폰이 유리합니다." : "현재 조건에서는 통신사 프로모션이 더 유리합니다."
+                });
+            }
+
+            // 공리 3
+            analysis.push({
+                principle: 3,
+                active: true,
+                reason: "바 타입 모델로 수리비 리스크가 폴드 대비 낮습니다."
+            });
+
+            // 공리 4
+            let principle4Reason = "";
+            if (hasTablet && deviceModel === 'ultra') {
+                principle4Reason = "태블릿과 S펜 연동성으로 작업 연속성 확보됩니다.";
+            } else if (hasTablet && deviceModel !== 'ultra') {
+                principle4Reason = "태블릿이 있어도 S펜 없는 모델로 연동성이 제한됩니다.";
+            }
+            
+            if (appleTransition) {
+                principle4Reason += (principle4Reason ? " " : "") + "2028년 애플 전환 계획으로 마지막 삼성 세대 투자입니다.";
+            }
+
+            analysis.push({
+                principle: 4,
+                active: hasTablet || appleTransition,
+                reason: principle4Reason || "작업 호환성과 전환 계획을 고려하세요."
+            });
+
+            return analysis;
+        }
+
+        function displayResults(data) {
+            try {
+                // 총비용 표시
+                const carrierTotalEl = document.getElementById('carrierTotal');
+                const retailTotalEl = document.getElementById('retailTotal');
+                
+                if (carrierTotalEl) carrierTotalEl.textContent = formatCurrency(data.incremental);
+                if (retailTotalEl) retailTotalEl.textContent = formatCurrency(data.retailTotal);
+
+                // 비용 세부분석
+                const breakdown = document.getElementById('breakdown');
+                if (breakdown) {
+                    breakdown.innerHTML = `
+                        <h4>📊 통신사 프로모션 세부비용</h4>
+                        <div class="breakdown-item">
+                            <span>베이스라인 (현재 요금 × 24개월)</span>
+                            <span>${formatCurrency(data.baseline)}</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>6개월 고가요금제 증액분</span>
+                            <span>${formatCurrency(data.carrier6months)}</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>18개월 일반요금제 증액분</span>
+                            <span>${formatCurrency(data.carrier18months)}</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>단말기 할부금 (출고가 - 지원금)</span>
+                            <span>${formatCurrency(data.carrierDeviceCost)}</span>
+                        </div>
+                        ${data.totalWelfareDiscount > 0 ? `
+                        <div class="breakdown-item">
+                            <span>복지할인 (-)</span>
+                            <span>-${formatCurrency(data.totalWelfareDiscount)}</span>
+                        </div>` : ''}
+                        <div class="breakdown-item">
+                            <span><strong>인크레멘탈 총비용</strong></span>
+                            <span><strong>${formatCurrency(data.incremental)}</strong></span>
+                        </div>
+                    `;
+                }
+
+                // 4원칙 분석 표시
+                const principlesAnalysis = document.getElementById('principlesAnalysis');
+                if (principlesAnalysis) {
+                    principlesAnalysis.innerHTML = data.principlesAnalysis.map(item => `
+                        <div class="principle">
+                            <h4>${CONFIG.principles[item.principle].title}</h4>
+                            <p>${CONFIG.principles[item.principle].description}</p>
+                            <p><strong>적용 결과:</strong> ${item.reason}</p>
+                        </div>
+                    `).join('');
+                }
+
+                // 추천 결과
+                const recommendation = document.getElementById('recommendation');
+                if (recommendation) {
+                    if (data.difference > 0) {
+                        recommendation.className = 'recommendation';
+                        recommendation.innerHTML = `
+                            <h3>🎯 추천: 통신사 프로모션</h3>
+                            <p><strong>절약 효과:</strong> 자급제 대비 ${formatCurrency(data.difference)} 절약</p>
+                            <p><strong>근거:</strong> ${data.principlesAnalysis.filter(p => p.active).map(p => CONFIG.principles[p.principle].title.split(': ')[1]).join(', ')}</p>
+                            <p>인크레멘탈 투자비용 ${formatCurrency(data.incremental)}으로 ${CONFIG.devices[data.deviceModel].name} 확보</p>
+                        `;
+                    } else {
+                        recommendation.className = 'recommendation warning';
+                        recommendation.innerHTML = `
+                            <h3>⚠️ 추천: 자급제 + 알뜰폰</h3>
+                            <p><strong>절약 효과:</strong> 통신사 대비 ${formatCurrency(Math.abs(data.difference))} 절약</p>
+                            <p><strong>근거:</strong> 공리 1 (기본 원칙) 적용</p>
+                            <p>복지할인이 없어 자급제 구매가 더 경제적입니다.</p>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('결과 표시 중 오류:', error);
+            }
+        }
+
+        function formatCurrency(amount) {
+            try {
+                return new Intl.NumberFormat('ko-KR', {
+                    style: 'currency',
+                    currency: 'KRW',
+                    minimumFractionDigits: 0
+                }).format(amount);
+            } catch (error) {
+                return `${amount.toLocaleString()}원`;
+            }
+        }
+
+        // 이벤트 리스너 등록
+        document.addEventListener('DOMContentLoaded', () => {
+            loadInputs();
+            
+            // 입력값 변경 시 자동 저장
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('input', saveInputs);
+                input.addEventListener('change', saveInputs);
+            });
+        });
+
+        // 에러 처리
+        window.addEventListener('error', (event) => {
+            console.error('전역 에러:', event.error);
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('처리되지 않은 Promise 거부:', event.reason);
+        });
+    </script>
+</body>
+</html>
